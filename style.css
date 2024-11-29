@@ -1,0 +1,34 @@
+*{
+    box-sizing: border-box;
+    margin:0;
+    padding:0
+}
+body{
+    display: flex;
+    flex-direction: column;
+    min-height:100dvh;
+    justify-content: center;
+    gap:7rem;
+}
+h1{
+    text-align: center;
+}
+
+.container{
+    width:450px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-self: center;
+}
+.grid{
+    background-color:black;
+    border: 5px solid goldenrod;
+    width:150px;
+    height:150px;
+}
+.symbol{
+    font-size: 100px; 
+    font-weight: bold; 
+    color:goldenrod; 
+    text-align: center; 
+}
