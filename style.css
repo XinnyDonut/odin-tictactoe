@@ -8,7 +8,8 @@ body{
     flex-direction: column;
     min-height:100dvh;
     justify-content: center;
-    gap:7rem;
+    align-items:center;
+    gap:4rem;
 }
 h1{
     text-align: center;
@@ -18,7 +19,7 @@ h1{
     width:450px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    align-self: center;
+   
 }
 .grid{
     background-color:black;

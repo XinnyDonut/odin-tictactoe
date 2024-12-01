@@ -1,5 +1,6 @@
 const container=document.querySelector(".container");
-
+const notification=document.querySelector(".notification");
+const replayBtn=document.querySelector(".replay");
 const gameModulePattern=(function(){
     const createBoard=function(){
         return[
@@ -27,13 +28,27 @@ const gameModulePattern=(function(){
         let gameOver=false;
         let winner="";
     
-        const printWinner = () => console.log(`Game Over. Winner is ${winner}`);
+        const printWinner = function(){ 
+            
+            if(winner){
+                notification.textContent=`Game Over. Winner is ${winner}`
+                console.log(`Game Over. Winner is ${winner}`)
+            }else{
+                notification.textContent = "It's a Tie!";
+                console.log(`it's a tie`)
+            }
+            
+        }
         const changeTurn=function(){
             console.log(`Before change: currentTurn is ${currentTurn.symbol}`);
             currentTurn = currentTurn === x ? o : x;
             //why do i need to define game.currentTurn here and why i can do this!??!
             game.currentTurn=currentTurn;
             console.log(`After change: currentTurn is ${currentTurn.symbol}`);
+        }
+        const printNextTurn=function(){
+            let nextTurn=currentTurn===x?o:x;
+            notification.textContent=`Next Turn is ${nextTurn.symbol}`
         }
 
         const finishGame=()=>gameOver=true;
@@ -82,9 +97,19 @@ const gameModulePattern=(function(){
                 winner="O"
                 return true;
             }
+            const isBoardFull = board.every(row => 
+                row.every(cell => cell !== null)
+            );
+        
+            if (isBoardFull && !winner) {
+                gameOver = true;
+                winner = "";
+                console.log("It's a Tie!");
+                return true;
+            }
             return false;
         }
-        return{x,o,gameOver,currentTurn,changeTurn,finishGame,decideWin,printWinner};
+        return{x,o,gameOver,currentTurn,changeTurn,finishGame,decideWin,printWinner,printNextTurn};
     }
     const displayGame=function(){    
         for(let i=0;i<3;i++){
@@ -92,23 +117,44 @@ const gameModulePattern=(function(){
             row.classList.add("grid-col");
             for(let j=0;j<3;j++){
                 const grid = document.createElement("button");
-                grid.addEventListener('click',function(){
-                    grid.textContent=game.currentTurn.symbol;
-                    grid.classList.add("symbol");
-                    playGame(j,i)
-                })
+                grid.classList.add("symbol");
                 grid.classList.add("grid");
                 row.appendChild(grid);
+                grid.textContent="";
+                grid.addEventListener('click',function(){
+                    if(grid.textContent===""){
+                        grid.textContent=game.currentTurn.symbol;
+                        playGame(j,i)
+                    }else{
+                        notification.textContent="This cell is already occupied!"
+                    }                 
+                })
             }
             container.appendChild(row);
-        }    
+        }
+        replayBtn.addEventListener('click',replayGame);    
     } 
-    return{createBoard,createPlayer,createGame,displayGame}
+    const replayGame=function(){
+        if (container) {
+            while (container.firstChild) {
+                container.removeChild(container.firstChild);
+            }
+        } 
+        displayGame();
+        notification.textContent="Player X's turn";
+       
+        board=createBoard();
+        game=createGame();
+        
+
+    }
+   
+    return{createBoard,createPlayer,createGame,displayGame,replayGame}
 })();
 
-const game=gameModulePattern.createGame();
-const board=gameModulePattern.createBoard();
-const display=gameModulePattern.displayGame();
+let game=gameModulePattern.createGame();
+let board=gameModulePattern.createBoard();
+gameModulePattern.displayGame();
 
 
 
@@ -116,6 +162,7 @@ function playGame(row,col){
     
     console.log(`Current turn before change in playgame: ${game.currentTurn.symbol}`);
     if (game.gameOver) {
+        notification.textContent=`It's a tie`
         console.log("The game is already over!");
         return;
     }
@@ -124,12 +171,12 @@ function playGame(row,col){
         return;
     }
     console.log(`Player ${game.currentTurn.symbol}'s turn.`);
+    game.printNextTurn();
     if (game.currentTurn.move(row, col)) {
         if (game.decideWin()) {
             game.printWinner();
             return board;
         }
-
         // ONLY Change turn if move was successful!
         game.changeTurn();
         console.log(`Current turn after change in playgames: ${game.currentTurn.symbol}`);
@@ -138,10 +185,13 @@ function playGame(row,col){
         return board;
     }
 
+ 
+    
+
 
     return board;
   
 }
-console.log("let play a game");
+console.log("let's play a game");
 
 
